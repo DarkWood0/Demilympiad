@@ -1,3 +1,4 @@
+#test
 categories_text = """растровая графика, векторная графика, живые материалы, фотография, фотоарт, трехмерное моделирование, дпи, фрактал-арт"""
 categories = categories_text.split(', ')
 for category in categories:
