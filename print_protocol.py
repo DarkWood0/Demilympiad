@@ -1,3 +1,4 @@
+# Список участников категории из протокола
 data_text = """Елена Ту - 13 - 1 - [url=https://ibb.co/gvH1ac][img]https://thumb.ibb.co/gvH1ac/017.jpg[/img][/url]
 Mypp - 18 - 2 - [url=https://ibb.co/cRBDMH][img]https://thumb.ibb.co/cRBDMH/04.jpg[/img][/url]
 I-Mago - 11 - 3 - [url=https://ibb.co/mH34Tx][img]https://thumb.ibb.co/mH34Tx/03.jpg[/img][/url]
@@ -20,6 +21,8 @@ Tijko - 23 - 19 - [url=https://ibb.co/nFq9Tx][img]https://thumb.ibb.co/nFq9Tx/01
 Nenz - 20 - 20 - [url=https://ibb.co/jSd4Tx][img]https://thumb.ibb.co/jSd4Tx/00.jpg[/img][/url]
 ПтицаСирин - 14 - 21 - [url=https://ibb.co/bDsZvc][img]https://thumb.ibb.co/bDsZvc/019.jpg[/img][/url]"""
 
+# Вывод этого списка в формате "№ в перемешанном списке - ссылка на изображение"
+# Проще говоря, просто отбрасывается ник участника и номер в оригинальном списке
 data = data_text.split('\n')
 for player in data:
   print(player.split(' - ',2)[2])
