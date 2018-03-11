@@ -44,8 +44,17 @@ pages = g.doc.select("//*[@id='ucpcontent']/table/tr/td/span/a")
 # Если страниц больше одной, то формируются ссылки на них,
 # которые добавляются в соответствующий список
 if pages.exists() == True:
-    for page in range(0, int(pages.text()[-1])):
-        page = page*30
+    if len(pages.text()) > 19:
+        raise Exception("Слишком много страниц для обработки")
+    elif len(pages.text()) > 16:
+        kp = pages.text()[-3:]
+    elif len(pages.text()) > 15:
+        kp = pages.text()[-2:]
+    elif len(pages.text()) == 15:
+        kp = pages.text()[-1]
+    for page in range(0, int(kp)):
+        k = 30
+        page = page*k
         pagination.append(gallery_url + '&st=' + str(page))
     # Обрабатываются все найденные страницы
     for page in pagination:
