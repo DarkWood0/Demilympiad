@@ -25,4 +25,4 @@ Nenz - 20 - 20 - [url=https://ibb.co/jSd4Tx][img]https://thumb.ibb.co/jSd4Tx/00.
 # Проще говоря, просто отбрасывается ник участника и номер в оригинальном списке
 data = data_text.split('\n')
 for player in data:
-  print(player.split(' - ',2)[2])
+    print(player.split(' - ', 2)[2])

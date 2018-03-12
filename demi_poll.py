@@ -1,8 +1,7 @@
-from grab import Grab
-from operator import itemgetter
-import os
 import json
+import os
 import urllib.request
+from grab import Grab
 
 g = Grab()
 
@@ -23,6 +22,7 @@ usernames = []
 # Список ссылок на изображения
 image_links = []
 
+
 def get_data():
     """Получает имя пользователя и соответствующую ему ссылку на изображение"""
     # Скрипт выделяет область с именем пользователя и ссылкой на изображение
@@ -35,15 +35,16 @@ def get_data():
     for image in user_images:
         selection = image.select(
             "div[@class='wraptocenter']/a/img[@class='shadow']").select(
-                '@src').text()
+            '@src').text()
         image_links.append(selection)
+
 
 # Скрипт проверяет есть ли в данной галерее изображений пагинация (страницы)
 pages = g.doc.select("//*[@id='ucpcontent']/table/tr/td/span/a")
 
 # Если страниц больше одной, то формируются ссылки на них,
 # которые добавляются в соответствующий список
-if pages.exists() == True:
+if pages.exists():
     if len(pages.text()) > 19:
         raise Exception("Слишком много страниц для обработки")
     elif len(pages.text()) > 16:
@@ -54,7 +55,7 @@ if pages.exists() == True:
         kp = pages.text()[-1]
     for page in range(0, int(kp)):
         k = 30
-        page = page*k
+        page = page * k
         pagination.append(gallery_url + '&st=' + str(page))
     # Обрабатываются все найденные страницы
     for page in pagination:
@@ -73,17 +74,18 @@ unique_images = 'downloaded_images/' + url.split('=')[1] + '_unique/unique_match
 store_data = 'downloaded_images/data/' + url.split('=')[1] + '_data_state.json'
 data_folder = os.path.dirname(store_data)
 
+
 def ensure_dir(directory):
     """Проверяет существование указанной папки.
 Если таковая отсутствует - создает ее."""
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+
 # Убеждаемся в существовании папки для хранения данных, благодаря которым
 # в последующих запусках скрипт будет ориентироваться была ли добавлена
 # новая информация в указанную вами тему или нет
 ensure_dir(data_folder)
-
 
 # Проводится проверка длин списков с именами пользователей и изображениями
 # Если длины списков различаются скрипт выдаст соответствующую ошибку
@@ -96,10 +98,12 @@ else:
 # из имен пользователей и ссылок на изображения
 database = dict(zip(usernames[::-1], image_links[::-1]))
 
+
 def file_directory(filename):
     """Получает имя файла и возвращает из него директорию назначения"""
     directory = os.path.dirname(filename)
     return directory
+
 
 def clear_dir(directory):
     """Удаляет файлы из указанной директории.
@@ -113,6 +117,7 @@ def clear_dir(directory):
         except Exception as e:
             print(e)
 
+
 # Следующая функция сохраняет текущую длину списка пользователей,
 # на которую скрипт будет ориентироваться при последующем запуске
 def save_data(filename):
@@ -120,15 +125,17 @@ def save_data(filename):
     with open(filename, 'w') as f_obj:
         json.dump(current_state, f_obj)
 
+
 # Эта функция сохраняет изображения в папку назначения, при этом задавая порядковый номер по порядку скачивания
 # Более старые картинки будут иметь больший номер		
 def downloading(data_object, directory):
     """Сохраняет изображения из data_object в directory"""
     for link in data_object:
-        image_name = link.rsplit('/',1)[1]
+        image_name = link.rsplit('/', 1)[1]
         print('Загружается изображение ' + image_name)
         order_name = str(0) + str(data_object.index(link))
         urllib.request.urlretrieve(link, directory + '/' + order_name + '.' + link.split('.')[2])
+
 
 def write_to_file(filename, data_object):
     """Записывает соответствие имен пользователей и загруженных ими изображений
@@ -138,16 +145,18 @@ def write_to_file(filename, data_object):
         with open(filename, 'a') as output:
             output.write(prepared_links + '\n')
 
+
 def get_all_matching(usernames, image_links):
     """Получает соответствие всех имен пользователей с загруженными ими
 изображениями; передаваемые аргументы должны быть списками"""
     matching = []
-    for i in range(max((len(usernames),len(image_links)))):
+    for i in range(max((len(usernames), len(image_links)))):
         while True:
-            data = (usernames[i],image_links[i])
+            data = (usernames[i], image_links[i])
             matching.append(data)
             break
     return matching
+
 
 # По сути основная функция скрипта, в которой применяются созданные выше функции
 def print_matching(filename, user_list, image_list, data_object):
@@ -157,6 +166,7 @@ def print_matching(filename, user_list, image_list, data_object):
     clear_dir(directory)
     downloading(list(data_object.values()), directory)
     write_to_file(filename, data_object.items())
+
 
 # В этой функции ведется проверка на существование файла, в который записывается количество обработанной информации
 # Так как при первом запуске этот файл не существует, то возникнет ошибка,
@@ -168,10 +178,11 @@ def check_data_store(data_file=store_data):
         with open(data_file) as f_obj:
             old_state = json.load(f_obj)
     except FileNotFoundError:
-        save_data(data_file)        
+        save_data(data_file)
         print_matching(unique_images, usernames, image_links, database)
     else:
         return old_state
+
 
 # Данная функция сверяет равенство старых данных с новыми для конкретной темы
 # Если они равны, то выдается сообщение "Нет новых данных", если есть -
@@ -196,10 +207,11 @@ def check_data_state(old_state=check_data_store()):
         image_copy.clear()
         for image in image_links[old_state:]:
             image_copy.append(image)
-        database_copy = dict(zip(user_copy[::-1], image_copy[::-1]))        
+        database_copy = dict(zip(user_copy[::-1], image_copy[::-1]))
         print_matching(unique_images, user_copy, image_copy, database_copy)
         save_data(store_data)
-        
+
+
 # При первом запуске скрипта перехватывает ошибку, инициируемую
 # функцией check_data_state() потому, что необходимый ей для работы
 # файл еще не создан. Он будет доступен только при последующих запусках
@@ -208,5 +220,6 @@ def first_start():
         check_data_state()
     except TypeError:
         pass
-    
+
+
 first_start()
